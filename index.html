@@ -21,12 +21,6 @@
     </div>
 
     <div class="controls">
-      <!-- Year Input -->
-      <div class="year-control-group" style="display:flex; align-items:center; gap:6px;">
-        <span style="color:var(--text-dim); font-size:13px; font-weight: 500;">Year:</span>
-        <input type="number" id="year-input" value="1800" min="-2000" max="2026" class="num-input" style="width: 70px;" />
-      </div>
-
       <!-- Settings Dropdown -->
       <div class="settings-dropdown" style="display:flex; align-items:center;">
         <button id="settings-btn" style="background:none; border:none; display:flex; align-items:center; padding: 0 5px; cursor:pointer;" onclick="toggleSettings(event)">
@@ -58,6 +52,16 @@
               <option value="japanese_scroll">OHM Japanese Scroll</option>
             </select>
           </div>
+          <div class="setting-row">
+            <span>Language</span>
+            <select id="language-select">
+              <option value="local">Local</option>
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="ar">Arabic</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -68,15 +72,24 @@
   <!-- Timeline Slider Floating Panel -->
   <div class="timeline-container">
     <div class="timeline-slider-wrapper">
-      <input type="range" id="timeline-slider" min="-2000" max="2026" value="1800" step="1" />
-      <div class="timeline-ticks">
-        <span data-year="-2000">2000 BCE</span>
-        <span data-year="-1000">1000 BCE</span>
-        <span data-year="0">1 CE</span>
-        <span data-year="1000">1000 CE</span>
-        <span data-year="1800">1800 CE</span>
-        <span data-year="2026">2026 CE</span>
+      <div class="timeline-header-row" style="position: relative; display: flex; align-items: center; justify-content: center; height: 30px;">
+        <div class="timeline-ticks">
+          <span data-year="-2000" style="left: 0%;">2000 BC</span>
+          <span data-year="-1500" style="left: 12.42%;">1500 BC</span>
+          <span data-year="-1000" style="left: 24.84%;">1000 BC</span>
+          <span data-year="-500" style="left: 37.26%;">500 BC</span>
+          <span data-year="500" style="left: 62.10%;">500 AD</span>
+          <span data-year="1000" style="left: 74.52%;">1000 AD</span>
+          <span data-year="1500" style="left: 86.94%;">1500 AD</span>
+          <span data-year="2026" style="left: 100%;">2026 AD</span>
+        </div>
+        <div class="timeline-header" style="z-index: 10;">
+          <input type="text" id="timeline-year-input" class="timeline-year-input" value="1800" maxlength="4" />
+          <div class="timeline-header-divider"></div>
+          <button id="era-toggle-btn" class="era-toggle-btn">AD</button>
+        </div>
       </div>
+      <input type="range" id="timeline-slider" min="-2000" max="2026" value="1800" step="1" />
     </div>
   </div>
 
