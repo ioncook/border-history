@@ -1,0 +1,248 @@
+:root {
+  --bg: #0b0b0c;
+  --header-bg: #121214;
+  --panel-bg: #18181c;
+  --text: #e2e2e7;
+  --text-dim: #8e8e93;
+  --border: #2c2c2e;
+  --btn-bg: #242426;
+  --map-void: #09090b;
+  --shadow: rgba(0, 0, 0, 0.6);
+  --accent: #ff5c1a;
+}
+
+body.light-mode {
+  --bg: #f2f2f7;
+  --header-bg: #e5e5ea;
+  --panel-bg: #ffffff;
+  --text: #1c1c1e;
+  --text-dim: #8e8e93;
+  --border: #d1d1d6;
+  --btn-bg: #e5e5ea;
+  --map-void: #f2f2f7;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --accent: #e04b08;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header-bar {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#map {
+  flex-grow: 1;
+  background: var(--map-void);
+  position: relative;
+}
+
+select,
+button {
+  cursor: pointer;
+}
+
+.controls select,
+.controls button,
+.num-input {
+  background-color: var(--btn-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  height: 32px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  margin: 0;
+  display: block;
+}
+
+.num-input {
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.num-input::-webkit-inner-spin-button,
+.num-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Settings Menu */
+.settings-dropdown {
+  position: relative;
+}
+
+.settings-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: var(--panel-bg);
+  min-width: 200px;
+  box-shadow: 0px 8px 24px var(--shadow);
+  z-index: 3000;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-content.show {
+  display: flex;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  gap: 10px;
+}
+
+.setting-row select {
+  height: 26px;
+  padding: 0 4px;
+}
+
+/* Timeline Floating Slider */
+.timeline-container {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 30px var(--shadow);
+  z-index: 500;
+}
+
+.timeline-slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-slider-wrapper input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: var(--border);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+.timeline-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s ease;
+}
+
+.timeline-slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.timeline-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+.timeline-ticks span {
+  cursor: pointer;
+  position: relative;
+}
+
+.timeline-ticks span:hover {
+  color: var(--text);
+}
+
+/* MapLibre Popup Customization */
+.maplibregl-popup {
+  z-index: 2000 !important;
+}
+
+.maplibregl-popup-content {
+  background: var(--panel-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  box-shadow: 0 4px 16px var(--shadow) !important;
+}
+
+.maplibregl-popup-close-button {
+  color: var(--text-dim) !important;
+  font-size: 16px !important;
+  top: 4px !important;
+  right: 4px !important;
+}
+
+.maplibregl-popup-close-button:hover {
+  color: var(--text) !important;
+  background: transparent !important;
+}
+
+.popup-details {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popup-details h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.popup-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.popup-label {
+  color: var(--text-dim);
+}
+
+.popup-val {
+  font-weight: 500;
+}

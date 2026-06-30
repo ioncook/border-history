@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Border History Viewer</title>
+  <meta name="description" content="Explore historical world borders and boundaries dynamically using OpenHistoricalMap vector tiles." />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^5.0.0/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="header-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <h2 class="title-text" style="margin:0; font-size: 18px; white-space: nowrap;">Border History Viewer</h2>
+      <div class="source-info" style="display: flex; flex-direction: column; gap: 1px; margin-left: 8px; line-height: 1.1;">
+        <span id="status" style="font-size: 11px; color:var(--text-dim);">Ready</span>
+        <a href="https://www.openhistoricalmap.org" target="_blank" style="font-size: 10px; color: var(--text-dim); text-decoration: none;">OpenHistoricalMap Data</a>
+      </div>
+    </div>
+
+    <div class="controls">
+      <!-- Year Input -->
+      <div class="year-control-group" style="display:flex; align-items:center; gap:6px;">
+        <span style="color:var(--text-dim); font-size:13px; font-weight: 500;">Year:</span>
+        <input type="number" id="year-input" value="1800" min="-2000" max="2026" class="num-input" style="width: 70px;" />
+      </div>
+
+      <!-- Settings Dropdown -->
+      <div class="settings-dropdown" style="display:flex; align-items:center;">
+        <button id="settings-btn" style="background:none; border:none; display:flex; align-items:center; padding: 0 5px; cursor:pointer;" onclick="toggleSettings(event)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <div id="settings-menu" class="settings-content">
+          <div class="setting-row">
+            <span>Theme</span>
+            <select id="theme-select">
+              <option value="dark">Dark Mode</option>
+              <option value="light">Light Mode</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <span>Projection</span>
+            <select id="projection-select">
+              <option value="mercator">Flat (Mercator)</option>
+              <option value="globe">Globe</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <span>Base Style</span>
+            <select id="style-select">
+              <option value="historical">OHM Historical</option>
+              <option value="woodblock">OHM Woodblock</option>
+              <option value="japanese_scroll">OHM Japanese Scroll</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- Timeline Slider Floating Panel -->
+  <div class="timeline-container">
+    <div class="timeline-slider-wrapper">
+      <input type="range" id="timeline-slider" min="-2000" max="2026" value="1800" step="1" />
+      <div class="timeline-ticks">
+        <span data-year="-2000">2000 BCE</span>
+        <span data-year="-1000">1000 BCE</span>
+        <span data-year="0">1 CE</span>
+        <span data-year="1000">1000 CE</span>
+        <span data-year="1800">1800 CE</span>
+        <span data-year="2026">2026 CE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MapLibre JS -->
+  <script src="https://unpkg.com/maplibre-gl@^5.0.0/dist/maplibre-gl.js"></script>
+  <!-- OpenHistoricalMap Dates Plugin -->
+  <script src="https://unpkg.com/@openhistoricalmap/maplibre-gl-dates"></script>
+  <!-- Main Application Logic -->
+  <script src="app.js"></script>
+</body>
+
+</html>
