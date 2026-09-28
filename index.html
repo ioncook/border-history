@@ -12,9 +12,53 @@
 
 <body>
   <div class="header-bar">
-    <div style="display: flex; align-items: center; gap: 8px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
       <h2 class="title-text" style="margin:0; font-size: 18px; white-space: nowrap;">Border History Viewer</h2>
-      <div class="source-info" style="display: flex; flex-direction: column; gap: 1px; margin-left: 8px; line-height: 1.1;">
+      
+      <!-- Expandable Calendar Dropdown in Top Left -->
+      <div class="calendar-dropdown-container">
+        <button id="calendar-toggle-btn" class="calendar-toggle-btn" title="Open Calendar & Historical Events">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span id="calendar-btn-label">Jan 1800 AD</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+
+        <div id="calendar-popup" class="calendar-popup">
+          <div class="calendar-header-nav">
+            <button id="cal-prev-month" class="cal-nav-btn" title="Previous Month">&lsaquo;</button>
+            <div class="cal-title-display">
+              <select id="cal-month-select" class="cal-select"></select>
+              <input type="number" id="cal-year-input" class="cal-year-input" />
+              <button id="cal-era-toggle" class="cal-era-btn">AD</button>
+            </div>
+            <button id="cal-next-month" class="cal-nav-btn" title="Next Month">&rsaquo;</button>
+          </div>
+
+          <!-- Calendar Grid -->
+          <div class="calendar-grid-header">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div id="calendar-days-grid" class="calendar-days-grid"></div>
+
+          <!-- Significant Events Section -->
+          <div class="calendar-events-section">
+            <div class="calendar-events-header">
+              <span id="calendar-events-title">Significant Events</span>
+              <span id="calendar-events-count" class="events-badge">0</span>
+            </div>
+            <div id="calendar-events-list" class="calendar-events-list">
+              <div class="cal-event-empty">Select or load a date to view historical events</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="source-info" style="display: flex; flex-direction: column; gap: 1px; margin-left: 4px; line-height: 1.1;">
         <span id="status" style="font-size: 11px; color:var(--text-dim);">Ready</span>
         <a href="https://www.openhistoricalmap.org" target="_blank" style="font-size: 10px; color: var(--text-dim); text-decoration: none;">OpenHistoricalMap Data</a>
       </div>
@@ -67,7 +111,10 @@
     </div>
   </div>
 
-  <div id="map"></div>
+  <div style="position: relative; flex-grow: 1; display: flex; flex-direction: column;">
+    <div id="map" style="flex-grow: 1;"></div>
+    <canvas id="flag-canvas"></canvas>
+  </div>
 
   <!-- Timeline Slider Floating Panel -->
   <div class="timeline-container">
@@ -84,6 +131,21 @@
           <span data-year="2026" style="left: 100%;">2026 AD</span>
         </div>
         <div class="timeline-header" style="z-index: 10;">
+          <select id="timeline-month-select" class="timeline-month-select">
+            <option value="1">Jan</option>
+            <option value="2">Feb</option>
+            <option value="3">Mar</option>
+            <option value="4">Apr</option>
+            <option value="5">May</option>
+            <option value="6">Jun</option>
+            <option value="7">Jul</option>
+            <option value="8">Aug</option>
+            <option value="9">Sep</option>
+            <option value="10">Oct</option>
+            <option value="11">Nov</option>
+            <option value="12">Dec</option>
+          </select>
+          <div class="timeline-header-divider"></div>
           <input type="text" id="timeline-year-input" class="timeline-year-input" value="1800" maxlength="4" />
           <div class="timeline-header-divider"></div>
           <button id="era-toggle-btn" class="era-toggle-btn">AD</button>
