@@ -397,7 +397,8 @@ button {
   pointer-events: auto !important;
   cursor: pointer !important;
   user-select: none;
-  /* Do NOT transition transform here as it interferes with MapLibre's continuous transform updates during dragging */
+  border-color: var(--header-bg) !important;
+  color: var(--header-bg) !important;
   transition: filter 0.15s ease;
   box-shadow: none !important;
   will-change: transform;
@@ -409,9 +410,16 @@ button {
   z-index: 100 !important;
 }
 
+/* When MapLibre marks occluded elements on globe/terrain, eliminate them completely */
+.maplibregl-marker.is-occluded {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 .maplibregl-marker {
   pointer-events: auto !important;
-  /* Ensure browser optimizes hardware-accelerated transforms without frame lagging */
   will-change: transform;
 }
 

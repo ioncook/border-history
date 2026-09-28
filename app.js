@@ -238,9 +238,9 @@ function addHighlightLayers() {
         type: 'line',
         source: 'clicked-highlight-source',
         paint: {
-          'line-color': '#000000',
+          'line-color': '#121214',
           'line-width': 3,
-          'line-opacity': 0.9
+          'line-opacity': 0.95
         },
         filter: ['in', '$type', 'LineString', 'Polygon']
       });
@@ -250,12 +250,12 @@ function addHighlightLayers() {
         type: 'circle',
         source: 'clicked-highlight-source',
         paint: {
-          'circle-color': '#000000',
+          'circle-color': '#121214',
           'circle-radius': 12,
           'circle-stroke-width': 2.5,
-          'circle-stroke-color': '#000000',
+          'circle-stroke-color': '#121214',
           'circle-opacity': 0.1,
-          'circle-stroke-opacity': 0.85
+          'circle-stroke-opacity': 0.95
         },
         filter: ['==', '$type', 'Point']
       });
@@ -676,13 +676,13 @@ function extractPolygonCoords(geojson) {
       
       if (f.geometry.type === 'Polygon') {
         const simplifiedRings = f.geometry.coordinates.map(ring => {
-          return simplifyCoordinates(ring, 0.005);
+          return simplifyCoordinates(ring, 0.008);
         });
         coordsList.push(simplifiedRings);
       } else if (f.geometry.type === 'MultiPolygon') {
         f.geometry.coordinates.forEach(polygonCoords => {
           const simplifiedRings = polygonCoords.map(ring => {
-            return simplifyCoordinates(ring, 0.005);
+            return simplifyCoordinates(ring, 0.008);
           });
           coordsList.push(simplifiedRings);
         });
@@ -1693,7 +1693,7 @@ async function fetchSignificantEvents() {
   }
 }
 
-// Parse wikitext from Wikipedia Year article (e.g., 1939, 1805, 1066)
+// Parse wikitext from Wikipedia Year article (e.g., 1941, 1805, 1066)
 function parseWikitextYearEvents(wikitext, year) {
   const events = [];
   const eventsMatch = wikitext.match(/==\s*Events\s*==([\s\S]*?)(?:==\s*Births\s*==|==\s*Deaths\s*==|==\s*Nobel|==\s*References|$)/i);
@@ -1701,6 +1701,7 @@ function parseWikitextYearEvents(wikitext, year) {
 
   const lines = textSection.split('\n');
   let currentMonthIdx = 0;
+  let currentPrefix = '';
 
   for (let rawLine of lines) {
     const line = rawLine.trim();
@@ -1713,13 +1714,14 @@ function parseWikitextYearEvents(wikitext, year) {
       if (foundIdx !== -1) {
         currentMonthIdx = foundIdx + 1;
       }
+      currentPrefix = '';
       continue;
     }
 
     if (line.startsWith('*')) {
       // Check if bullet starts with a month or date (e.g., * September 1 – ...)
       for (let i = 0; i < MONTH_NAMES.length; i++) {
-        const mRegex = new RegExp(`^\\*\\s*\\[?\\[?${MONTH_NAMES[i]}`, 'i');
+        const mRegex = new RegExp(`^\\*+\\s*\\[?\\[?${MONTH_NAMES[i]}`, 'i');
         if (mRegex.test(line)) {
           currentMonthIdx = i + 1;
           break;
@@ -1740,10 +1742,18 @@ function parseWikitextYearEvents(wikitext, year) {
       cleaned = cleaned.replace(/''+/g, '');
       cleaned = cleaned.replace(/^\*+\s*/, '').trim();
 
-      if (cleaned.length > 20 && !cleaned.toLowerCase().includes('in progress') && !cleaned.toLowerCase().includes('unclear')) {
-        const cat = getEventCategory(cleaned);
+      const isSubBullet = line.startsWith('**');
+      if (!isSubBullet) {
+        // Track introductory context if line is a header like "* December 7 – WWII:"
+        currentPrefix = (cleaned.endsWith(':') || cleaned.endsWith('–') || cleaned.endsWith('-') || cleaned.length < 50) ? cleaned : '';
+      }
+
+      const fullText = (isSubBullet && currentPrefix) ? `${currentPrefix} ${cleaned}` : cleaned;
+
+      if (fullText.length > 20 && !fullText.toLowerCase().includes('in progress') && !fullText.toLowerCase().includes('unclear')) {
+        const cat = getEventCategory(fullText);
         events.push({
-          text: cleaned,
+          text: fullText,
           monthIdx: currentMonthIdx || 1, // Fallback to month 1 if unspecified
           year: year,
           category: cat,
@@ -1793,7 +1803,7 @@ async function displayYearEvents(allYearEvents, year, activeMonth) {
   // Batch query coordinates for titles from Wikipedia API in chunks of 50
   if (titlesToFetch.length > 0) {
     const batches = [];
-    const titlesSlice = titlesToFetch.slice(0, 100);
+    const titlesSlice = titlesToFetch.slice(0, 300); // Expanded from 100 to 300 so major events across the year are resolved
     for (let i = 0; i < titlesSlice.length; i += 50) {
       batches.push(titlesSlice.slice(i, i + 50));
     }
@@ -1908,13 +1918,13 @@ async function displayYearEvents(allYearEvents, year, activeMonth) {
       el.style.height = '26px';
       el.style.borderRadius = '50%';
       el.style.backgroundColor = evt.category.color; // Intended category color
-      el.style.border = '2px solid #111113'; // Strong black border
+      el.style.border = '2px solid var(--header-bg)'; // Same shade of grey as the top bar
       el.style.boxShadow = 'none'; // Shadow removed per user request
       el.style.cursor = 'pointer';
       el.style.display = 'flex';
       el.style.alignItems = 'center';
       el.style.justifyContent = 'center';
-      el.style.color = '#111113'; // Black/dark grey symbol
+      el.style.color = 'var(--header-bg)'; // Same shade of grey as the top bar
       el.style.zIndex = '50';
       el.title = `${monthLabel} — ${evt.category.label}: ${evt.text}`;
       el.innerHTML = evt.category.svg;
@@ -1924,7 +1934,7 @@ async function displayYearEvents(allYearEvents, year, activeMonth) {
         .setHTML(`
           <div style="font-size:12px; max-width:250px; line-height:1.4;">
             <div style="font-size:12px; font-weight:700; color:${evt.category.color}; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-              <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${evt.category.color}; border:1.5px solid #111113; border-radius:50%; color:#111113;">
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${evt.category.color}; border:1.5px solid var(--header-bg); border-radius:50%; color:var(--header-bg);">
                 ${evt.category.svg}
               </span>
               <span>${monthLabel} ${year < 0 ? `${Math.abs(year)} BC` : `${year} AD`} &bull; ${evt.category.label}</span>
@@ -1934,7 +1944,11 @@ async function displayYearEvents(allYearEvents, year, activeMonth) {
           </div>
         `);
 
-      const marker = new maplibregl.Marker({ element: el })
+      // Set opacityWhenCovered: '0' so MapLibre automatically sets opacity to 0 when occluded
+      const marker = new maplibregl.Marker({
+        element: el,
+        opacityWhenCovered: '0'
+      })
         .setLngLat(finalCoords)
         .setPopup(popup)
         .addTo(map);
@@ -1972,57 +1986,53 @@ async function displayYearEvents(allYearEvents, year, activeMonth) {
   updateGlobeMarkerVisibility();
 }
 
-// Hide markers that are on the back side of the Earth or obscured near the horizon in Globe projection
+// Hide markers that are on the back side of the Earth or near the horizon in Globe projection
 function updateGlobeMarkerVisibility() {
   if (!map) return;
-  const proj = currentProjection;
-  if (proj !== 'globe') {
+  const isGlobe = currentProjection === 'globe';
+
+  if (!isGlobe) {
     eventMarkers.forEach(item => {
       if (item.el) {
         item.el.style.display = 'flex';
-        item.el.style.opacity = '1';
         item.el.style.pointerEvents = 'auto';
       }
     });
     return;
   }
 
-  // In globe view, calculate angular distance from map camera center to each marker's lng/lat
+  // In globe view, calculate angular distance from map camera center to each marker
   const center = map.getCenter();
-  const pitch = map.getPitch() || 0; // pitch in degrees
+  const pitch = map.getPitch() || 0;
   const rad = Math.PI / 180;
   const cLat = center.lat * rad;
   const cLon = center.lng * rad;
 
-  // When camera is pitched back, the horizon facing the camera perspective shifts forward,
-  // obscuring points sooner. A threshold of 0.22 - 0.35 cleanly cuts off points before they clip through the curved globe edge.
+  // Horizon threshold: points beyond 75 degrees from center (cosDist < 0.25) are approaching the horizon rim
   const pitchFactor = Math.sin(pitch * rad) * 0.15;
-  const threshold = Math.max(0.20, 0.22 + pitchFactor);
+  const cutoff = Math.max(0.25, 0.28 + pitchFactor);
 
   eventMarkers.forEach(item => {
     if (!item.el || !item.lngLat) return;
+
     const mLon = item.lngLat[0] * rad;
     const mLat = item.lngLat[1] * rad;
-
-    // Spherical dot product between center normal and marker normal
     const cosDist = Math.sin(cLat) * Math.sin(mLat) + Math.cos(cLat) * Math.cos(mLat) * Math.cos(cLon - mLon);
 
-    // If point is near or past the horizon curve, completely hide it
-    if (cosDist < threshold) {
+    // If on the back side of the globe or near the horizon rim, vanish completely
+    if (cosDist < cutoff) {
       item.el.style.display = 'none';
-      item.el.style.opacity = '0';
       item.el.style.pointerEvents = 'none';
       if (item.popup && item.popup.isOpen()) item.popup.remove();
     } else {
       item.el.style.display = 'flex';
-      item.el.style.opacity = '1';
       item.el.style.pointerEvents = 'auto';
     }
   });
 }
 
 // Hook map events to update globe horizon occlusion continuously
-['move', 'rotate', 'pitch', 'zoom'].forEach(evt => {
+['move', 'rotate', 'pitch', 'zoom', 'render'].forEach(evt => {
   map.on(evt, () => {
     if (currentProjection === 'globe') {
       updateGlobeMarkerVisibility();
